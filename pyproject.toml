@@ -11,6 +11,7 @@ dependencies = [
     "asyncpg>=0.29.0",
     "anthropic>=0.25.0",
     "click>=8.1.0",
+    "openpyxl>=3.1.0",
     "pydantic>=2.7.0",
     "pydantic-settings>=2.2.0",
 ]
@@ -23,7 +24,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/triage_agent"]
+packages = ["src/triage_agent", "src/testdata"]
 
 [dependency-groups]
 dev = [
