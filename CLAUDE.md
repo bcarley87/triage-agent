@@ -225,3 +225,109 @@ uv run triage inspect           # sanity check
 - Never add a required (non-optional) field to the Pydantic model — existing rows won't have it.
 - If renaming a column, treat it as delete + add (two migrations, or one combined).
 - Config key-value changes only require updating `seed_workbook.py` and `reader.py` (`_parse_config`).
+
+---
+
+### run_eval
+
+Use this routine to run the AI eval harness and interpret results.
+
+**Running the harness:**
+
+```bash
+# All three layers
+uv run triage eval
+
+# Single layer
+uv run triage eval --layer classify
+uv run triage eval --layer triage
+uv run triage eval --layer draft
+```
+
+**Output format:**
+
+Each layer prints a bar chart and a failure list:
+```
+CLASSIFY EVAL — 18/20 passed
+████████████████████░░  90%
+
+FAILURES:
+  clf-014  PCOS: expected medication_change — got: new_diagnosis
+  clf-019  missed Graves: required prior_no_show not in flags
+```
+
+Timestamped JSON is saved to `evals/YYYYMMDD_HHMMSS_<layer>.json`. Each file contains:
+- `layer`: which eval ran
+- `passed`, `total`, `score`: aggregate counts
+- `cases`: list of `{id, description, passed, result, expected, failure_reason}`
+
+**Interpreting scores:**
+
+| Score | Meaning |
+|-------|---------|
+| 100% | Prompts are well-calibrated for the fixture set |
+| 85–99% | Acceptable; review failures to distinguish edge cases from prompt bugs |
+| <85% | Prompt needs iteration — use the `iterate_prompt` routine |
+
+A failure is not always a prompt bug — check whether the fixture expectation itself is too strict (e.g., `trigger_reason_contains` substring that's too specific). Fix the fixture before fixing the prompt if the model's answer is semantically correct.
+
+**Re-running after a prompt change:**
+
+```bash
+uv run triage eval --layer classify
+# Compare pass count vs. prior run in evals/
+diff <(jq '.cases[] | select(.passed==false) | .id' evals/<old>.json) \
+     <(jq '.cases[] | select(.passed==false) | .id' evals/<new>.json)
+```
+
+---
+
+### iterate_prompt
+
+Use this routine to improve a prompt when eval scores are below target or a failure pattern is identified.
+
+**The loop:**
+
+**1. Establish a baseline:**
+```bash
+uv run triage eval --layer <layer>
+# Note: N/20 passed, save the evals/ filename
+```
+
+**2. Identify the failure pattern:**
+
+Open the saved JSON and look at `failure_reason` across all failing cases. Group by pattern:
+- Missing flag (classifier underflagging)
+- Wrong urgency tier (triage misjudging severity)
+- Hallucinated flag not in vocabulary (classifier overflagging)
+- Draft too long or contains forbidden content
+
+**3. Edit the prompt:**
+
+Prompts live in `src/triage_agent/agent/prompts/`:
+- `classifier.py` → `build_prompt()` — flag vocabulary, FLAG APPLICATION RULES, examples
+- `triage.py` → `build_prompt()` — URGENCY RULES, CHANNEL RULES, escalation guidance
+- `drafter.py` → `build_prompt()` — channel constraints, STRICT CONTENT RULES
+
+**Common fixes:**
+- Add an explicit rule for the failing case to the relevant rules section
+- Add a concrete example that mirrors the failure
+- Tighten a threshold (e.g., "HbA1c > 13% = critical_lab")
+- Broaden a rule that's too narrow
+
+**4. Re-run the eval:**
+```bash
+uv run triage eval --layer <layer>
+# Compare new N/20 vs. baseline
+```
+
+**5. Accept or revert:**
+- If score improved and no previously-passing cases regressed → keep
+- If regressions appeared → revert with `git diff src/triage_agent/agent/prompts/` and try a narrower edit
+- Commit the prompt change with the score delta in the commit message: `improve classifier prompt: 17→19/20`
+
+**Rules:**
+- Always run the full layer eval, not just the failing cases — regressions matter.
+- Never special-case a single patient name or value in a prompt — generalise to a rule.
+- Do not edit the fixture JSON to make a test pass unless the expectation is genuinely wrong.
+- Keep `temperature = 0.0` in `EVAL_CONFIG` so results are deterministic across runs.

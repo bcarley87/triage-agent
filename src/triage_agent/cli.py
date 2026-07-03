@@ -73,3 +73,61 @@ def inspect(workbook_path: str) -> None:
     click.echo(f"\nDrafts pending approval : {len(pending_drafts)}")
     click.echo(f"Manual queue unresolved : {unresolved}")
     click.echo()
+
+
+@cli.command("run")
+@click.option("--file", "workbook_path", default="master.xlsx", show_default=True, help="Path to master workbook.")
+@click.option("--dry-run", is_flag=True, help="Execute Claude calls but write nothing to disk.")
+@click.option(
+    "--step",
+    type=click.Choice(["classify", "triage", "draft"]),
+    default=None,
+    help="Run only one pass (default: all three).",
+)
+def run_pipeline(workbook_path: str, dry_run: bool, step: str | None) -> None:
+    """Run the agent pipeline: classify → triage → draft."""
+    from triage_agent.agent.run import run as run_agent
+
+    path = Path(workbook_path)
+    if not path.exists():
+        click.echo(f"Error: {path} not found. Run 'triage seed' to create it.", err=True)
+        raise SystemExit(1)
+
+    mode = f"[DRY RUN — no disk writes]" if dry_run else "[LIVE]"
+    step_label = step or "all passes"
+    click.echo(f"Running pipeline {mode}: {step_label} on {path}")
+    run_agent(str(path), dry_run=dry_run, step=step)
+    click.echo("Done.")
+
+
+@cli.command("eval")
+@click.option(
+    "--layer",
+    type=click.Choice(["classify", "triage", "draft"]),
+    default=None,
+    help="Which layer to evaluate (default: all three).",
+)
+def run_eval(layer: str | None) -> None:
+    """Run the eval harness against fixture cases and print scores."""
+    from triage_agent.agent.eval import (
+        print_summary,
+        run_classifier_eval,
+        run_drafter_eval,
+        run_triage_eval,
+        save_result,
+    )
+
+    layers_to_run = [layer] if layer else ["classify", "triage", "draft"]
+
+    for lyr in layers_to_run:
+        click.echo(f"\n--- {lyr.upper()} EVAL ---")
+        if lyr == "classify":
+            result = run_classifier_eval()
+        elif lyr == "triage":
+            result = run_triage_eval()
+        else:
+            result = run_drafter_eval()
+
+        print_summary(result)
+        out = save_result(result)
+        click.echo(f"Results saved to {out}")

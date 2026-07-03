@@ -1,0 +1,348 @@
+[
+  {
+    "id": "drf-001",
+    "description": "SMS for low-urgency medication change follow-up — must be under 320 chars",
+    "input": {
+      "candidate": {
+        "candidate_id": "D001", "patient_id": "DP001", "patient_name": "Maria Santos",
+        "visit_type": "Diabetes Follow-up", "admin_notes": "Metformin 1000mg ongoing.",
+        "flags": ["chronic_patient", "medication_change"],
+        "trigger_reason": "medication_titration_checkin", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "low", "channel": "sms", "flags_added": [], "rationale": "Routine follow-up."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-002",
+    "description": "Email for medium-urgency abnormal HbA1c — must include clinic phone",
+    "input": {
+      "candidate": {
+        "candidate_id": "D002", "patient_id": "DP002", "patient_name": "Jennifer White",
+        "visit_type": "Lab Review", "lab_type": "HbA1c", "lab_value": "10.2%",
+        "admin_notes": "HbA1c above target.",
+        "flags": ["abnormal_lab", "chronic_patient"],
+        "trigger_reason": "abnormal_hba1c_result", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "Elevated HbA1c."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]",
+                  "must_not_contain": ["your HbA1c is", "you have diabetes", "you need to change"] }
+  },
+  {
+    "id": "drf-003",
+    "description": "SMS reminder for first missed appointment — under 320 chars",
+    "input": {
+      "candidate": {
+        "candidate_id": "D003", "patient_id": "DP003", "patient_name": "Sandra Lewis",
+        "visit_type": "Missed: Thyroid Follow-up",
+        "admin_notes": "No show. On Levothyroxine.",
+        "flags": ["missed_appointment", "chronic_patient"],
+        "trigger_reason": "missed_appointment_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "sms", "flags_added": [], "rationale": "Missed appointment reminder."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-004",
+    "description": "Email for new T2DM diagnosis follow-up — supportive, no diagnosis statement",
+    "input": {
+      "candidate": {
+        "candidate_id": "D004", "patient_id": "DP004", "patient_name": "Helen Stewart",
+        "visit_type": "New Diagnosis Consult", "lab_type": "Fasting Glucose",
+        "admin_notes": "Type 2 Diabetes newly diagnosed.",
+        "flags": ["new_diagnosis", "chronic_patient"],
+        "trigger_reason": "new_diagnosis_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "New patient education."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]",
+                  "must_not_contain": ["you have been diagnosed with", "your diabetes"] }
+  },
+  {
+    "id": "drf-005",
+    "description": "SMS for low-urgency post-procedure follow-up — brief",
+    "input": {
+      "candidate": {
+        "candidate_id": "D005", "patient_id": "DP005", "patient_name": "Robert Kim",
+        "visit_type": "Graves Disease Follow-up",
+        "admin_notes": "Post-RAI therapy.",
+        "flags": ["post_procedure", "chronic_patient"],
+        "trigger_reason": "post_procedure_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "low", "channel": "sms", "flags_added": [], "rationale": "Routine post-procedure."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-006",
+    "description": "Email for overdue monitoring (HbA1c 8 months) — invite to reschedule labs",
+    "input": {
+      "candidate": {
+        "candidate_id": "D006", "patient_id": "DP006", "patient_name": "Donald Campbell",
+        "visit_type": "Overdue Check", "lab_type": "HbA1c",
+        "admin_notes": "HbA1c overdue 8 months.",
+        "flags": ["overdue_monitoring", "chronic_patient"],
+        "trigger_reason": "overdue_lab_monitoring", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "Overdue labs."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-007",
+    "description": "SMS for stable chronic patient routine check-in — simple language",
+    "input": {
+      "candidate": {
+        "candidate_id": "D007", "patient_id": "DP007", "patient_name": "Sarah Chen",
+        "visit_type": "Hashimoto's Follow-up",
+        "admin_notes": "Stable thyroid function.",
+        "flags": ["chronic_patient"],
+        "trigger_reason": "post_visit_checkin", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "low", "channel": "sms", "flags_added": [], "rationale": "Routine follow-up."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-008",
+    "description": "Email for elderly patient medication change — clear, warm tone",
+    "input": {
+      "candidate": {
+        "candidate_id": "D008", "patient_id": "DP008", "patient_name": "Betty Roberts",
+        "visit_type": "Medication Review",
+        "admin_notes": "HC dose increased 20mg to 25mg/day. Age 73.",
+        "flags": ["medication_change", "elderly", "chronic_patient"],
+        "trigger_reason": "medication_titration_checkin", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "Medication follow-up for elderly."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]",
+                  "must_not_contain": ["increase your medication", "change your dose"] }
+  },
+  {
+    "id": "drf-009",
+    "description": "SMS for first missed appointment — friendly tone, under 320",
+    "input": {
+      "candidate": {
+        "candidate_id": "D009", "patient_id": "DP009", "patient_name": "Michelle Hall",
+        "visit_type": "Missed: HbA1c Review",
+        "admin_notes": "No show. Prior HbA1c was 8.7%.",
+        "flags": ["missed_appointment", "chronic_patient"],
+        "trigger_reason": "missed_appointment_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "sms", "flags_added": [], "rationale": "Missed appointment SMS."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-010",
+    "description": "Email for new hypothyroid diagnosis + medication started — no clinical interpretation",
+    "input": {
+      "candidate": {
+        "candidate_id": "D010", "patient_id": "DP010", "patient_name": "Frank Sanchez",
+        "visit_type": "New Diagnosis Consult", "lab_type": "TSH", "lab_value": "9.8 mIU/L",
+        "admin_notes": "Hypothyroidism newly diagnosed. Levothyroxine 50mcg started.",
+        "flags": ["new_diagnosis", "chronic_patient", "medication_change"],
+        "trigger_reason": "new_diagnosis_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "New diagnosis follow-up."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]",
+                  "must_not_contain": ["your TSH is", "you have hypothyroidism"] }
+  },
+  {
+    "id": "drf-011",
+    "description": "SMS for overdue TSH monitoring — brief nudge",
+    "input": {
+      "candidate": {
+        "candidate_id": "D011", "patient_id": "DP011", "patient_name": "Lisa Parker",
+        "visit_type": "Overdue Check", "lab_type": "TSH",
+        "admin_notes": "TSH not checked 18 months. On Levothyroxine.",
+        "flags": ["overdue_monitoring", "chronic_patient"],
+        "trigger_reason": "overdue_lab_monitoring", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "sms", "flags_added": [], "rationale": "Overdue labs."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-012",
+    "description": "Email for stable post-procedure follow-up — 2–4 paragraphs",
+    "input": {
+      "candidate": {
+        "candidate_id": "D012", "patient_id": "DP012", "patient_name": "Sarah Chen",
+        "visit_type": "Hashimoto's Follow-up",
+        "admin_notes": "Dose maintained. Stable.",
+        "flags": ["post_procedure", "chronic_patient"],
+        "trigger_reason": "post_procedure_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "low", "channel": "email", "flags_added": [], "rationale": "Stable follow-up."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-013",
+    "description": "SMS for elderly patient medication change — simple, short",
+    "input": {
+      "candidate": {
+        "candidate_id": "D013", "patient_id": "DP013", "patient_name": "Dorothy Williams",
+        "visit_type": "Adrenal Follow-up",
+        "admin_notes": "Hydrocortisone management. Age 74.",
+        "flags": ["medication_change", "elderly", "chronic_patient"],
+        "trigger_reason": "medication_titration_checkin", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "sms", "flags_added": [], "rationale": "Medication checkin."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-014",
+    "description": "Email for repeated no-show patient — supportive, not accusatory",
+    "input": {
+      "candidate": {
+        "candidate_id": "D014", "patient_id": "DP014", "patient_name": "Christopher Walker",
+        "visit_type": "Missed: Annual Diabetes Review",
+        "admin_notes": "No show. HbA1c overdue 3 months.",
+        "flags": ["missed_appointment", "prior_no_show", "overdue_monitoring", "chronic_patient"],
+        "trigger_reason": "missed_appointment_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "Repeated no-show."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-015",
+    "description": "SMS for abnormal TSH lab result — brief, warm, under 320",
+    "input": {
+      "candidate": {
+        "candidate_id": "D015", "patient_id": "DP015", "patient_name": "Thomas Brown",
+        "visit_type": "Lab Review", "lab_type": "TSH", "lab_value": "18.2 mIU/L",
+        "admin_notes": "TSH markedly elevated. Fatigue reported.",
+        "flags": ["abnormal_lab", "chronic_patient"],
+        "trigger_reason": "abnormal_tsh_result", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "sms", "flags_added": [], "rationale": "Abnormal TSH."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]",
+                  "must_not_contain": ["your TSH is 18", "elevated TSH means"] }
+  },
+  {
+    "id": "drf-016",
+    "description": "Email for routine chronic patient post-visit — low urgency, warm",
+    "input": {
+      "candidate": {
+        "candidate_id": "D016", "patient_id": "DP016", "patient_name": "Carlos Rivera",
+        "visit_type": "Diabetes Management",
+        "admin_notes": "Insulin pump review. Carb ratios adjusted.",
+        "flags": ["chronic_patient"],
+        "trigger_reason": "post_visit_checkin", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "low", "channel": "email", "flags_added": [], "rationale": "Post-visit follow-up."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-017",
+    "description": "SMS for new PCOS diagnosis — brief, supportive",
+    "input": {
+      "candidate": {
+        "candidate_id": "D017", "patient_id": "DP017", "patient_name": "Ruth Morris",
+        "visit_type": "New Diagnosis Consult",
+        "admin_notes": "PCOS newly diagnosed. Age 32. Lifestyle counseling given.",
+        "flags": ["new_diagnosis", "chronic_patient"],
+        "trigger_reason": "new_diagnosis_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "sms", "flags_added": [], "rationale": "New diagnosis follow-up."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-018",
+    "description": "Email for overdue monitoring + prior no-show — motivating, non-judgmental",
+    "input": {
+      "candidate": {
+        "candidate_id": "D018", "patient_id": "DP018", "patient_name": "Joseph Young",
+        "visit_type": "Missed: Medication Review",
+        "admin_notes": "No show. Insulin titration was planned.",
+        "flags": ["missed_appointment", "prior_no_show", "overdue_monitoring", "chronic_patient"],
+        "trigger_reason": "overdue_lab_monitoring", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "high", "channel": "email", "flags_added": [],
+        "rationale": "High urgency missed + overdue."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-019",
+    "description": "SMS for Graves post-procedure low-urgency — 320 char max",
+    "input": {
+      "candidate": {
+        "candidate_id": "D019", "patient_id": "DP019", "patient_name": "Robert Kim",
+        "visit_type": "Graves Disease Follow-up",
+        "admin_notes": "Post-RAI therapy. Monitoring for hypothyroidism.",
+        "flags": ["post_procedure", "chronic_patient"],
+        "trigger_reason": "post_procedure_followup", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "low", "channel": "sms", "flags_added": [], "rationale": "Post-procedure SMS."
+      }
+    },
+    "expected": { "max_length": 320, "min_length": 20, "has_placeholder": "[CLINIC_PHONE]" }
+  },
+  {
+    "id": "drf-020",
+    "description": "Email for elderly patient with abnormal lab — professional, careful tone",
+    "input": {
+      "candidate": {
+        "candidate_id": "D020", "patient_id": "DP020", "patient_name": "Ashley Jackson",
+        "visit_type": "Lab Review", "lab_type": "HbA1c", "lab_value": "11.1%",
+        "admin_notes": "Third consecutive HbA1c above 10%. Age 68.",
+        "flags": ["abnormal_lab", "chronic_patient"],
+        "trigger_reason": "abnormal_hba1c_result", "status": "Triaged"
+      },
+      "triage_decision": {
+        "urgency_tier": "medium", "channel": "email", "flags_added": [], "rationale": "Persistent abnormal HbA1c."
+      }
+    },
+    "expected": { "max_length": 2000, "min_length": 50, "has_placeholder": "[CLINIC_PHONE]",
+                  "must_not_contain": ["your HbA1c is 11", "you have poorly controlled"] }
+  }
+]

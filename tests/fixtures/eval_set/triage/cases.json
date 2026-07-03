@@ -1,0 +1,242 @@
+[
+  {
+    "id": "tri-001",
+    "description": "critical_lab + elderly → high urgency, nurse_callback",
+    "input": {
+      "candidate_id": "T001", "patient_id": "TP001", "patient_name": "Eleanor Harris",
+      "visit_type": "Critical Lab Review", "lab_type": "HbA1c", "lab_value": "14.3%",
+      "admin_notes": "Age 72. Emergency HbA1c.",
+      "trigger_reason": "critical_lab_result",
+      "flags": ["critical_lab", "elderly", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback"] }
+  },
+  {
+    "id": "tri-002",
+    "description": "missed_appointment + prior_no_show → high urgency, nurse_callback",
+    "input": {
+      "candidate_id": "T002", "patient_id": "TP002", "patient_name": "David Clark",
+      "visit_type": "Missed: Diabetes 3-Month Check",
+      "admin_notes": "No show. Second missed in 6 months.",
+      "trigger_reason": "missed_appointment_followup",
+      "flags": ["missed_appointment", "prior_no_show", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback"] }
+  },
+  {
+    "id": "tri-003",
+    "description": "abnormal_lab only → medium urgency, email preferred",
+    "input": {
+      "candidate_id": "T003", "patient_id": "TP003", "patient_name": "Jennifer White",
+      "visit_type": "Lab Review", "lab_type": "HbA1c", "lab_value": "10.2%",
+      "admin_notes": "HbA1c above target.",
+      "trigger_reason": "abnormal_hba1c_result",
+      "flags": ["abnormal_lab", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "nurse_callback"] }
+  },
+  {
+    "id": "tri-004",
+    "description": "medication_change only → low urgency",
+    "input": {
+      "candidate_id": "T004", "patient_id": "TP004", "patient_name": "Paul Baker",
+      "visit_type": "Medication Review",
+      "admin_notes": "Insulin glargine increased from 28 to 32 units.",
+      "trigger_reason": "medication_titration_checkin",
+      "flags": ["medication_change", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "low", "allowed_channels": ["sms", "email"] }
+  },
+  {
+    "id": "tri-005",
+    "description": "new_diagnosis → medium urgency, email",
+    "input": {
+      "candidate_id": "T005", "patient_id": "TP005", "patient_name": "Helen Stewart",
+      "visit_type": "New Diagnosis Consult", "lab_type": "Fasting Glucose", "lab_value": "198 mg/dL",
+      "admin_notes": "T2DM newly diagnosed. Education referral needed.",
+      "trigger_reason": "new_diagnosis_followup",
+      "flags": ["new_diagnosis", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "nurse_callback"] }
+  },
+  {
+    "id": "tri-006",
+    "description": "critical_lab (glucose 489) → high urgency, nurse_callback",
+    "input": {
+      "candidate_id": "T006", "patient_id": "TP006", "patient_name": "Norman Thompson",
+      "visit_type": "Critical Lab Review", "lab_type": "Fasting Glucose", "lab_value": "489 mg/dL",
+      "admin_notes": "Critically high glucose. Not answering calls.",
+      "trigger_reason": "critical_glucose_result",
+      "flags": ["critical_lab", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback"] }
+  },
+  {
+    "id": "tri-007",
+    "description": "overdue_monitoring → medium urgency",
+    "input": {
+      "candidate_id": "T007", "patient_id": "TP007", "patient_name": "Donald Campbell",
+      "visit_type": "Overdue Check", "lab_type": "HbA1c",
+      "admin_notes": "HbA1c overdue by 8 months.",
+      "trigger_reason": "overdue_lab_monitoring",
+      "flags": ["overdue_monitoring", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "sms", "nurse_callback"] }
+  },
+  {
+    "id": "tri-008",
+    "description": "post_procedure + elderly → medium urgency, nurse_callback likely",
+    "input": {
+      "candidate_id": "T008", "patient_id": "TP008", "patient_name": "William Thompson",
+      "visit_type": "Cushing's Follow-up",
+      "admin_notes": "Post-surgical monitoring. Age 71.",
+      "trigger_reason": "post_procedure_followup",
+      "flags": ["post_procedure", "elderly", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["nurse_callback", "email"] }
+  },
+  {
+    "id": "tri-009",
+    "description": "chronic_patient routine post-visit — no alert flags → low urgency",
+    "input": {
+      "candidate_id": "T009", "patient_id": "TP009", "patient_name": "Sarah Chen",
+      "visit_type": "Hashimoto's Follow-up",
+      "admin_notes": "Dose maintained. Stable thyroid function.",
+      "trigger_reason": "post_visit_checkin",
+      "flags": ["chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "low", "allowed_channels": ["email", "sms", "no_action"] }
+  },
+  {
+    "id": "tri-010",
+    "description": "first missed_appointment (no prior_no_show) → medium urgency",
+    "input": {
+      "candidate_id": "T010", "patient_id": "TP010", "patient_name": "Sandra Lewis",
+      "visit_type": "Missed: Thyroid Follow-up",
+      "admin_notes": "No show. On Levothyroxine.",
+      "trigger_reason": "missed_appointment_followup",
+      "flags": ["missed_appointment", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["sms", "email", "nurse_callback"] }
+  },
+  {
+    "id": "tri-011",
+    "description": "critical cortisol + elderly → always high, nurse_callback",
+    "input": {
+      "candidate_id": "T011", "patient_id": "TP011", "patient_name": "Patricia Robinson",
+      "visit_type": "Critical Lab Review", "lab_type": "AM Cortisol", "lab_value": "0.4 mcg/dL",
+      "admin_notes": "Adrenal crisis risk. Age 78.",
+      "trigger_reason": "critical_lab_result",
+      "flags": ["critical_lab", "elderly", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback"] }
+  },
+  {
+    "id": "tri-012",
+    "description": "abnormal_lab + medication_change → medium urgency",
+    "input": {
+      "candidate_id": "T012", "patient_id": "TP012", "patient_name": "Karen Mitchell",
+      "visit_type": "Medication Review",
+      "admin_notes": "Ozempic titrated 0.5mg to 1.0mg weekly.",
+      "trigger_reason": "medication_titration_checkin",
+      "flags": ["abnormal_lab", "medication_change", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "nurse_callback"] }
+  },
+  {
+    "id": "tri-013",
+    "description": "elderly + missed_appointment → high urgency (elderly escalation)",
+    "input": {
+      "candidate_id": "T013", "patient_id": "TP013", "patient_name": "Barbara Allen",
+      "visit_type": "Missed: Osteoporosis Check",
+      "admin_notes": "No show. Age 76. On bisphosphonate.",
+      "trigger_reason": "missed_appointment_followup",
+      "flags": ["missed_appointment", "elderly", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback", "email"] }
+  },
+  {
+    "id": "tri-014",
+    "description": "new_diagnosis + chronic_patient → medium urgency, email",
+    "input": {
+      "candidate_id": "T014", "patient_id": "TP014", "patient_name": "Frank Sanchez",
+      "visit_type": "New Diagnosis Consult", "lab_type": "TSH", "lab_value": "9.8 mIU/L",
+      "admin_notes": "Hypothyroidism newly diagnosed. Levothyroxine 50mcg started.",
+      "trigger_reason": "new_diagnosis_followup",
+      "flags": ["new_diagnosis", "chronic_patient", "medication_change"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "nurse_callback"] }
+  },
+  {
+    "id": "tri-015",
+    "description": "overdue_monitoring + prior_no_show → high urgency",
+    "input": {
+      "candidate_id": "T015", "patient_id": "TP015", "patient_name": "Christopher Walker",
+      "visit_type": "Missed: Annual Diabetes Review",
+      "admin_notes": "No show. HbA1c overdue 3 months.",
+      "trigger_reason": "overdue_lab_monitoring",
+      "flags": ["overdue_monitoring", "prior_no_show", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback", "email"] }
+  },
+  {
+    "id": "tri-016",
+    "description": "medication_change + elderly → medium urgency (elderly escalates low→medium)",
+    "input": {
+      "candidate_id": "T016", "patient_id": "TP016", "patient_name": "Betty Roberts",
+      "visit_type": "Medication Review",
+      "admin_notes": "HC dose increased 20mg to 25mg/day. Age 73.",
+      "trigger_reason": "medication_titration_checkin",
+      "flags": ["medication_change", "elderly", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "sms", "nurse_callback"] }
+  },
+  {
+    "id": "tri-017",
+    "description": "post_procedure, no elderly flag → low urgency, email or sms",
+    "input": {
+      "candidate_id": "T017", "patient_id": "TP017", "patient_name": "Robert Kim",
+      "visit_type": "Graves Disease Follow-up",
+      "admin_notes": "Post-RAI therapy. Monitoring for hypothyroidism.",
+      "trigger_reason": "post_procedure_followup",
+      "flags": ["post_procedure", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "low", "allowed_channels": ["email", "sms"] }
+  },
+  {
+    "id": "tri-018",
+    "description": "suppressed TSH (abnormal_lab) → medium urgency",
+    "input": {
+      "candidate_id": "T018", "patient_id": "TP018", "patient_name": "Thomas Brown",
+      "visit_type": "Lab Review", "lab_type": "TSH", "lab_value": "0.04 mIU/L",
+      "admin_notes": "TSH suppressed. On Levothyroxine 150mcg.",
+      "trigger_reason": "abnormal_tsh_result",
+      "flags": ["abnormal_lab", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "nurse_callback"] }
+  },
+  {
+    "id": "tri-019",
+    "description": "chronic_patient + medication_change + overdue_monitoring → medium urgency",
+    "input": {
+      "candidate_id": "T019", "patient_id": "TP019", "patient_name": "Anthony Collins",
+      "visit_type": "Overdue Check", "lab_type": "HbA1c",
+      "admin_notes": "HbA1c and lipid panel overdue. Last labs May 2025.",
+      "trigger_reason": "overdue_lab_monitoring",
+      "flags": ["chronic_patient", "medication_change", "overdue_monitoring"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "medium", "allowed_channels": ["email", "sms", "nurse_callback"] }
+  },
+  {
+    "id": "tri-020",
+    "description": "new_diagnosis + critical_lab → high urgency, nurse_callback",
+    "input": {
+      "candidate_id": "T020", "patient_id": "TP020", "patient_name": "Raymond Rogers",
+      "visit_type": "New Diagnosis Consult", "lab_type": "Calcium", "lab_value": "11.8 mg/dL",
+      "admin_notes": "Primary hyperparathyroidism newly diagnosed. Age 67. Surgery referral pending.",
+      "trigger_reason": "new_diagnosis_followup",
+      "flags": ["new_diagnosis", "critical_lab", "chronic_patient"], "status": "Flagged"
+    },
+    "expected": { "urgency_tier": "high", "allowed_channels": ["nurse_callback"] }
+  }
+]

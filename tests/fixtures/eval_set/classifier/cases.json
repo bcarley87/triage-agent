@@ -1,0 +1,302 @@
+[
+  {
+    "id": "clf-001",
+    "description": "Critically high HbA1c (14.3%) in elderly diabetic — expect critical_lab and elderly",
+    "input": {
+      "candidate_id": "E001", "patient_id": "EP001", "patient_name": "Eleanor Harris",
+      "appointment_date": "2026-07-01", "visit_type": "Critical Lab Review",
+      "lab_type": "HbA1c", "lab_value": "14.3%",
+      "admin_notes": "Emergency-level HbA1c. Age 72. Possible DKA risk."
+    },
+    "expected": {
+      "required_flags": ["critical_lab", "elderly"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-002",
+    "description": "TSH 18.2 mIU/L (markedly elevated) — expect abnormal_lab, chronic_patient",
+    "input": {
+      "candidate_id": "E002", "patient_id": "EP002", "patient_name": "Kevin Wilson",
+      "appointment_date": "2026-06-16", "visit_type": "Lab Review",
+      "lab_type": "TSH", "lab_value": "18.2 mIU/L",
+      "admin_notes": "TSH markedly elevated. Patient reports fatigue. On Levothyroxine."
+    },
+    "expected": {
+      "required_flags": ["abnormal_lab", "chronic_patient"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-003",
+    "description": "Second missed appointment for diabetes — expect missed_appointment and prior_no_show",
+    "input": {
+      "candidate_id": "E003", "patient_id": "EP003", "patient_name": "David Clark",
+      "appointment_date": "2026-06-18", "visit_type": "Missed: Diabetes 3-Month Check",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "No show. Second missed appointment in 6 months."
+    },
+    "expected": {
+      "required_flags": ["missed_appointment", "prior_no_show"],
+      "trigger_reason_contains": "missed",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-004",
+    "description": "New T2DM patient started on Ozempic — expect medication_change",
+    "input": {
+      "candidate_id": "E004", "patient_id": "EP004", "patient_name": "Priya Patel",
+      "appointment_date": "2026-06-22", "visit_type": "New Patient Consult",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "New patient, T2DM. Started on Ozempic 0.5mg weekly."
+    },
+    "expected": {
+      "required_flags": ["medication_change"],
+      "trigger_reason_contains": "medication",
+      "min_confidence": 0.70
+    }
+  },
+  {
+    "id": "clf-005",
+    "description": "Critically low AM cortisol (0.4 mcg/dL) in elderly patient — expect critical_lab, elderly",
+    "input": {
+      "candidate_id": "E005", "patient_id": "EP005", "patient_name": "Patricia Robinson",
+      "appointment_date": "2026-06-30", "visit_type": "Critical Lab Review",
+      "lab_type": "AM Cortisol", "lab_value": "0.4 mcg/dL",
+      "admin_notes": "Critically low cortisol. Adrenal crisis risk. Age 78."
+    },
+    "expected": {
+      "required_flags": ["critical_lab", "elderly"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.80
+    }
+  },
+  {
+    "id": "clf-006",
+    "description": "New Type 2 Diabetes diagnosis — expect new_diagnosis, chronic_patient",
+    "input": {
+      "candidate_id": "E006", "patient_id": "EP006", "patient_name": "Helen Stewart",
+      "appointment_date": "2026-06-30", "visit_type": "New Diagnosis Consult",
+      "lab_type": "Fasting Glucose", "lab_value": "198 mg/dL",
+      "admin_notes": "Type 2 Diabetes newly diagnosed. Diabetes education referral needed."
+    },
+    "expected": {
+      "required_flags": ["new_diagnosis", "chronic_patient"],
+      "trigger_reason_contains": "diagnosis",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-007",
+    "description": "HbA1c overdue by 8 months — expect overdue_monitoring",
+    "input": {
+      "candidate_id": "E007", "patient_id": "EP007", "patient_name": "Donald Campbell",
+      "appointment_date": "2025-11-04", "visit_type": "Overdue Check",
+      "lab_type": "HbA1c", "lab_value": null,
+      "admin_notes": "Last HbA1c Nov 2025. Due every 3 months. Now 8 months overdue."
+    },
+    "expected": {
+      "required_flags": ["overdue_monitoring", "chronic_patient"],
+      "trigger_reason_contains": "overdue",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-008",
+    "description": "Insulin glargine dose increased — expect medication_change, chronic_patient",
+    "input": {
+      "candidate_id": "E008", "patient_id": "EP008", "patient_name": "Paul Baker",
+      "appointment_date": "2026-06-16", "visit_type": "Medication Review",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "Insulin glargine increased from 28 to 32 units nightly."
+    },
+    "expected": {
+      "required_flags": ["medication_change", "chronic_patient"],
+      "trigger_reason_contains": "medication",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-009",
+    "description": "Stable adrenal follow-up in elderly patient (74) — expect elderly, chronic_patient",
+    "input": {
+      "candidate_id": "E009", "patient_id": "EP009", "patient_name": "Dorothy Williams",
+      "appointment_date": "2026-06-05", "visit_type": "Adrenal Follow-up",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "Hydrocortisone management, stable. Age 74."
+    },
+    "expected": {
+      "required_flags": ["elderly", "chronic_patient"],
+      "trigger_reason_contains": "visit",
+      "min_confidence": 0.70
+    }
+  },
+  {
+    "id": "clf-010",
+    "description": "Fasting glucose 285 mg/dL — expect abnormal_lab, chronic_patient",
+    "input": {
+      "candidate_id": "E010", "patient_id": "EP010", "patient_name": "Amanda Garcia",
+      "appointment_date": "2026-06-26", "visit_type": "Lab Review",
+      "lab_type": "Fasting Glucose", "lab_value": "285 mg/dL",
+      "admin_notes": "Fasting glucose very high. Recent illness noted."
+    },
+    "expected": {
+      "required_flags": ["abnormal_lab", "chronic_patient"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-011",
+    "description": "First missed thyroid follow-up — expect missed_appointment, chronic_patient",
+    "input": {
+      "candidate_id": "E011", "patient_id": "EP011", "patient_name": "Sandra Lewis",
+      "appointment_date": "2026-06-20", "visit_type": "Missed: Thyroid Follow-up",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "No show. On Levothyroxine, TSH check due."
+    },
+    "expected": {
+      "required_flags": ["missed_appointment", "chronic_patient"],
+      "trigger_reason_contains": "missed",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-012",
+    "description": "Post-RAI Graves disease follow-up — expect post_procedure, chronic_patient",
+    "input": {
+      "candidate_id": "E012", "patient_id": "EP012", "patient_name": "Robert Kim",
+      "appointment_date": "2026-06-10", "visit_type": "Graves Disease Follow-up",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "Post-RAI therapy. Monitoring for hypothyroidism."
+    },
+    "expected": {
+      "required_flags": ["post_procedure", "chronic_patient"],
+      "trigger_reason_contains": "procedure",
+      "min_confidence": 0.65
+    }
+  },
+  {
+    "id": "clf-013",
+    "description": "HbA1c 10.2% above 7% target — expect abnormal_lab, chronic_patient",
+    "input": {
+      "candidate_id": "E013", "patient_id": "EP013", "patient_name": "Jennifer White",
+      "appointment_date": "2026-06-24", "visit_type": "Lab Review",
+      "lab_type": "HbA1c", "lab_value": "10.2%",
+      "admin_notes": "HbA1c significantly above target of 7%."
+    },
+    "expected": {
+      "required_flags": ["abnormal_lab", "chronic_patient"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.80
+    }
+  },
+  {
+    "id": "clf-014",
+    "description": "PCOS newly diagnosed, Metformin started — expect new_diagnosis, medication_change",
+    "input": {
+      "candidate_id": "E014", "patient_id": "EP014", "patient_name": "Fatima Al-Hassan",
+      "appointment_date": "2026-06-30", "visit_type": "PCOS Consult",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "Metformin started for insulin resistance."
+    },
+    "expected": {
+      "required_flags": ["medication_change"],
+      "trigger_reason_contains": "medication",
+      "min_confidence": 0.65
+    }
+  },
+  {
+    "id": "clf-015",
+    "description": "TSH not checked in 18 months on Levothyroxine — expect overdue_monitoring",
+    "input": {
+      "candidate_id": "E015", "patient_id": "EP015", "patient_name": "Lisa Parker",
+      "appointment_date": "2025-01-15", "visit_type": "Overdue Check",
+      "lab_type": "TSH", "lab_value": null,
+      "admin_notes": "TSH not checked since Jan 2025. On Levothyroxine. 18 months overdue."
+    },
+    "expected": {
+      "required_flags": ["overdue_monitoring", "chronic_patient"],
+      "trigger_reason_contains": "overdue",
+      "min_confidence": 0.80
+    }
+  },
+  {
+    "id": "clf-016",
+    "description": "Levothyroxine dose increased 88→100 mcg — expect medication_change",
+    "input": {
+      "candidate_id": "E016", "patient_id": "EP016", "patient_name": "Donna Nelson",
+      "appointment_date": "2026-06-23", "visit_type": "Medication Review",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "Levothyroxine adjusted from 88mcg to 100mcg."
+    },
+    "expected": {
+      "required_flags": ["medication_change", "chronic_patient"],
+      "trigger_reason_contains": "medication",
+      "min_confidence": 0.80
+    }
+  },
+  {
+    "id": "clf-017",
+    "description": "Critically high fasting glucose 489 mg/dL — expect critical_lab",
+    "input": {
+      "candidate_id": "E017", "patient_id": "EP017", "patient_name": "Norman Thompson",
+      "appointment_date": "2026-07-01", "visit_type": "Critical Lab Review",
+      "lab_type": "Fasting Glucose", "lab_value": "489 mg/dL",
+      "admin_notes": "Critically high fasting glucose. Patient not answering calls."
+    },
+    "expected": {
+      "required_flags": ["critical_lab"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.85
+    }
+  },
+  {
+    "id": "clf-018",
+    "description": "Low AM cortisol 1.2 mcg/dL (abnormal, not critical) — expect abnormal_lab",
+    "input": {
+      "candidate_id": "E018", "patient_id": "EP018", "patient_name": "Jessica Taylor",
+      "appointment_date": "2026-06-27", "visit_type": "Lab Review",
+      "lab_type": "AM Cortisol", "lab_value": "1.2 mcg/dL",
+      "admin_notes": "Low morning cortisol. Adrenal insufficiency concern."
+    },
+    "expected": {
+      "required_flags": ["abnormal_lab", "chronic_patient"],
+      "trigger_reason_contains": "lab",
+      "min_confidence": 0.70
+    }
+  },
+  {
+    "id": "clf-019",
+    "description": "Second missed Graves follow-up with undetectable TSH context — expect prior_no_show",
+    "input": {
+      "candidate_id": "E019", "patient_id": "EP019", "patient_name": "Mark Scott",
+      "appointment_date": "2026-06-24", "visit_type": "Missed: Graves Follow-up",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "No show. TSH was undetectable at last visit."
+    },
+    "expected": {
+      "required_flags": ["missed_appointment"],
+      "trigger_reason_contains": "missed",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "clf-020",
+    "description": "Post-surgical Cushing's monitoring, elderly 71 — expect post_procedure, elderly",
+    "input": {
+      "candidate_id": "E020", "patient_id": "EP020", "patient_name": "William Thompson",
+      "appointment_date": "2026-06-08", "visit_type": "Cushing's Follow-up",
+      "lab_type": null, "lab_value": null,
+      "admin_notes": "Post-surgical monitoring. Age 71."
+    },
+    "expected": {
+      "required_flags": ["post_procedure", "elderly"],
+      "trigger_reason_contains": "procedure",
+      "min_confidence": 0.70
+    }
+  }
+]
